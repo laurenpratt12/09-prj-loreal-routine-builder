@@ -186,6 +186,15 @@ body {
   display: flex;
   gap: 15px;
   min-height: 160px;
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.product-card.selected {
+  border-color: #000;
+  border-width: 2px;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
 }
 
 .product-card img {
@@ -213,6 +222,27 @@ body {
   color: #666;
 }
 
+/* info button on card */
+.info-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.info-btn:hover {
+  background: #000;
+  color: #fff;
+}
+
 /* selected products */
 .selected-products {
   margin: 40px 0;
@@ -230,6 +260,49 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+/* selected item chip */
+.selected-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+.selected-item img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+}
+
+.remove-btn:hover {
+  color: #000;
+}
+
+.clear-all-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.clear-all-btn:hover {
+  background: #000;
+  color: #fff;
 }
 
 .generate-btn {
@@ -252,4 +325,74 @@ body {
 
 .generate-btn i {
   margin-right: 8px;
+}
+
+/* description modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 8px;
+  padding: 30px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+}
+
+.modal-content img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 12px;
+}
+
+.modal-brand {
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.modal-description {
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: left;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* chat bubbles */
+.chat-message {
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  max-width: 85%;
+  white-space: pre-wrap;
+}
+
+.chat-message.user {
+  background: #000;
+  color: #fff;
+  margin-left: auto;
+}
+
+.chat-message.assistant {
+  background: #eee;
+  color: #333;
+  margin-right: auto;
 }
