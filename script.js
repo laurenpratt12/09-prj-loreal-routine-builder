@@ -8,7 +8,7 @@ const chatWindow = document.getElementById("chatWindow");
 const userInput = document.getElementById("userInput");
 
 /* Replace with your actual deployed Cloudflare Worker URL */
-const WORKER_URL = "https://your-worker-name.your-subdomain.workers.dev";
+const WORKER_URL = "https://loreal-chatbot.prattla5.workers.dev/";
 
 /* ---------- State ---------- */
 let allProducts = [];
