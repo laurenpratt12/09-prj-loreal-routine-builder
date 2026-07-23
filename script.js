@@ -1,20 +1,23 @@
 /* ---------- DOM references ---------- */
 const categoryFilter = document.getElementById("categoryFilter");
+const productSearch = document.getElementById("productSearch");
 const productsContainer = document.getElementById("productsContainer");
 const selectedProductsList = document.getElementById("selectedProductsList");
 const generateRoutineBtn = document.getElementById("generateRoutine");
 const chatForm = document.getElementById("chatForm");
 const chatWindow = document.getElementById("chatWindow");
 const userInput = document.getElementById("userInput");
+const rtlToggle = document.getElementById("rtlToggle");
 
 /* Replace with your actual deployed Cloudflare Worker URL */
-const WORKER_URL = "https://loreal-chatbot.prattla5.workers.dev/";
+const WORKER_URL = "https://loreal-chatbot.prattla5.workers.dev";
 
 /* ---------- State ---------- */
 let allProducts = [];
-let selectedProducts =
-  JSON.parse(localStorage.getItem("selectedProducts")) || [];
+let selectedProducts = JSON.parse(localStorage.getItem("selectedProducts")) || [];
 let conversationHistory = [];
+let currentCategory = "";
+let currentSearchTerm = "";
 
 /* ---------- Initial placeholder ---------- */
 productsContainer.innerHTML = `
@@ -56,7 +59,7 @@ function toggleProductSelection(product) {
 /* ---------- Render product grid ---------- */
 function displayProducts(products) {
   if (!products.length) {
-    productsContainer.innerHTML = `<div class="placeholder-message">No products found in this category.</div>`;
+    productsContainer.innerHTML = `<div class="placeholder-message">No products found.</div>`;
     return;
   }
 
@@ -73,9 +76,38 @@ function displayProducts(products) {
         <p>${product.brand}</p>
       </div>
     </div>
-  `,
+  `
     )
     .join("");
+}
+
+/* ---------- Combined category + search filtering ---------- */
+function applyFilters() {
+  let filtered = allProducts;
+
+  if (currentCategory) {
+    filtered = filtered.filter((p) => p.category === currentCategory);
+  }
+
+  if (currentSearchTerm) {
+    const term = currentSearchTerm.toLowerCase();
+    filtered = filtered.filter(
+      (p) =>
+        p.name.toLowerCase().includes(term) ||
+        p.brand.toLowerCase().includes(term) ||
+        p.description.toLowerCase().includes(term) ||
+        p.category.toLowerCase().includes(term)
+    );
+  }
+
+  if (!currentCategory && !currentSearchTerm) {
+    productsContainer.innerHTML = `
+      <div class="placeholder-message">Select a category or search to view products</div>
+    `;
+    return;
+  }
+
+  displayProducts(filtered);
 }
 
 /* ---------- Render the "Selected Products" panel ---------- */
@@ -96,7 +128,7 @@ function renderSelectedProducts() {
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
-    `,
+    `
       )
       .join("")}
     <button id="clearAllBtn" class="clear-all-btn">Clear All</button>
@@ -127,9 +159,16 @@ function showDescriptionModal(product) {
 
 /* ---------- Category filter ---------- */
 categoryFilter.addEventListener("change", async (e) => {
-  const products = await loadProducts();
-  const filtered = products.filter((p) => p.category === e.target.value);
-  displayProducts(filtered);
+  await loadProducts();
+  currentCategory = e.target.value;
+  applyFilters();
+});
+
+/* ---------- Search field (live filtering as user types) ---------- */
+productSearch.addEventListener("input", async (e) => {
+  await loadProducts();
+  currentSearchTerm = e.target.value.trim();
+  applyFilters();
 });
 
 /* ---------- Grid clicks: select card OR open info modal ---------- */
@@ -159,9 +198,7 @@ selectedProductsList.addEventListener("click", (e) => {
     selectedProducts = selectedProducts.filter((p) => p.id !== id);
     saveSelectedProducts();
     renderSelectedProducts();
-    productsContainer
-      .querySelector(`[data-id="${id}"]`)
-      ?.classList.remove("selected");
+    productsContainer.querySelector(`[data-id="${id}"]`)?.classList.remove("selected");
   }
 
   if (clearBtn) {
@@ -178,7 +215,7 @@ selectedProductsList.addEventListener("click", (e) => {
 function addChatMessage(role, text) {
   const message = document.createElement("div");
   message.className = `chat-message ${role}`;
-  message.textContent = text;
+  message.textContent = role === "user" ? `You: ${text}` : text;
   chatWindow.appendChild(message);
   chatWindow.scrollTop = chatWindow.scrollHeight;
 }
@@ -192,8 +229,7 @@ async function callWorker(messages) {
   });
 
   const data = await response.json();
-  if (data.error)
-    throw new Error(data.error.message || "Something went wrong.");
+  if (data.error) throw new Error(data.error.message || "Something went wrong.");
   return data.choices[0].message.content;
 }
 
@@ -205,28 +241,31 @@ generateRoutineBtn.addEventListener("click", async () => {
   }
 
   chatWindow.innerHTML = "";
-  addChatMessage("assistant", "Building your personalized routine…");
 
-  const productData = selectedProducts.map(
-    ({ name, brand, category, description }) => ({
-      name,
-      brand,
-      category,
-      description,
-    }),
-  );
+  const productData = selectedProducts.map(({ name, brand, category, description }) => ({
+    name,
+    brand,
+    category,
+    description,
+  }));
 
   const userMessage = `Using ONLY these selected products, create a step-by-step personalized routine (morning and/or evening as relevant), explaining the order of use and why each product fits: ${JSON.stringify(productData)}`;
 
   conversationHistory = [{ role: "user", content: userMessage }];
 
+  const thinkingMsg = document.createElement("div");
+  thinkingMsg.className = "chat-message assistant thinking";
+  thinkingMsg.textContent = "Thinking...";
+  chatWindow.appendChild(thinkingMsg);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+
   try {
     const reply = await callWorker(conversationHistory);
     conversationHistory.push({ role: "assistant", content: reply });
-    chatWindow.innerHTML = "";
+    thinkingMsg.remove();
     addChatMessage("assistant", reply);
   } catch (err) {
-    chatWindow.innerHTML = "";
+    thinkingMsg.remove();
     addChatMessage("assistant", `Sorry, something went wrong: ${err.message}`);
   }
 });
@@ -241,13 +280,28 @@ chatForm.addEventListener("submit", async (e) => {
   userInput.value = "";
   conversationHistory.push({ role: "user", content: question });
 
+  const thinkingMsg = document.createElement("div");
+  thinkingMsg.className = "chat-message assistant thinking";
+  thinkingMsg.textContent = "Thinking...";
+  chatWindow.appendChild(thinkingMsg);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+
   try {
     const reply = await callWorker(conversationHistory);
     conversationHistory.push({ role: "assistant", content: reply });
+    thinkingMsg.remove();
     addChatMessage("assistant", reply);
   } catch (err) {
+    thinkingMsg.remove();
     addChatMessage("assistant", `Sorry, something went wrong: ${err.message}`);
   }
+});
+
+/* ---------- RTL toggle ---------- */
+rtlToggle.addEventListener("click", () => {
+  const isRTL = document.documentElement.dir === "rtl";
+  document.documentElement.dir = isRTL ? "ltr" : "rtl";
+  document.documentElement.lang = isRTL ? "en" : "ar";
 });
 
 /* ---------- Init ---------- */

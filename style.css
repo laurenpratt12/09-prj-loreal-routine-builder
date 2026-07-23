@@ -25,46 +25,75 @@ body {
   padding-bottom: 10px;
 }
 
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  position: relative;
+}
+
 .logo {
   width: 250px;
   margin-bottom: 15px;
+}
+
+.rtl-toggle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: #fff;
+  border: 1px solid #E3A535;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.rtl-toggle:hover {
+  background: #E3A535;
+  color: #fff;
 }
 
 .site-title {
   font-size: 22px;
   font-weight: 500;
   margin-bottom: 10px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #e3a535;
-  display: inline-block;
 }
 
-/* category filter */
+/* category filter + search */
 .search-section {
   margin: 30px 0;
   display: flex;
+  gap: 12px;
 }
 
-.search-section select {
-  width: 100%;
+.search-section select,
+.search-section input {
+  flex: 1;
   padding: 16px;
   font-size: 18px;
-  border: 2px solid #000;
+  border: 2px solid #E3A535;
   border-radius: 8px;
-  cursor: pointer;
   background-color: white;
   font-weight: 500;
 }
 
+.search-section select {
+  cursor: pointer;
+}
+
+.search-section input:focus,
 .search-section select:focus {
   outline: none;
-  border-color: #e3a535;
+  border-color: #666;
 }
 
 /* chat section */
 .chatbox {
   margin: 40px 0;
-  border: 2px solid #000;
+  border: 2px solid #E3A535;
   border-radius: 8px;
   padding: 26px;
 }
@@ -116,7 +145,7 @@ body {
 
 .chat-form button {
   font-size: 18px;
-  background: #ff003b;
+  background: #FF003B;
   color: #fff;
   border: none;
   padding: 12px;
@@ -191,9 +220,7 @@ body {
   min-height: 160px;
   position: relative;
   cursor: pointer;
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .product-card.selected {
@@ -252,7 +279,7 @@ body {
 .selected-products {
   margin: 40px 0;
   padding: 20px;
-  border: 2px solid #000;
+  border: 2px solid #E3A535;
   border-radius: 8px;
 }
 
@@ -272,7 +299,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid #e3a535;
+  border: 1px solid #ccc;
   border-radius: 20px;
   padding: 6px 10px;
   font-size: 14px;
@@ -317,7 +344,7 @@ body {
   font-size: 18px;
   font-weight: 500;
   color: #fff;
-  background: #ff003b;
+  background: #FF003B;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -400,4 +427,60 @@ body {
   background: #eee;
   color: #333;
   margin-right: auto;
+}
+
+.chat-message.thinking {
+  font-style: italic;
+  color: #888;
+}
+
+/* ---------- RTL support ---------- */
+html[dir="rtl"] body {
+  direction: rtl;
+}
+
+html[dir="rtl"] .header-top {
+  flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .rtl-toggle {
+  right: auto;
+  left: 0;
+}
+
+html[dir="rtl"] .site-footer nav a {
+  margin: 0 8px;
+}
+
+html[dir="rtl"] .product-card {
+  text-align: right;
+}
+
+html[dir="rtl"] .info-btn {
+  right: auto;
+  left: 8px;
+}
+
+html[dir="rtl"] .chat-form {
+  flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .chat-message.user {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+html[dir="rtl"] .chat-message.assistant {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+html[dir="rtl"] .selected-item,
+html[dir="rtl"] .modal-description {
+  text-align: right;
+}
+
+html[dir="rtl"] .modal-close {
+  right: auto;
+  left: 14px;
 }
