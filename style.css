@@ -34,6 +34,9 @@ body {
   font-size: 22px;
   font-weight: 500;
   margin-bottom: 10px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e3a535;
+  display: inline-block;
 }
 
 /* category filter */
@@ -55,7 +58,7 @@ body {
 
 .search-section select:focus {
   outline: none;
-  border-color: #666;
+  border-color: #e3a535;
 }
 
 /* chat section */
@@ -113,7 +116,7 @@ body {
 
 .chat-form button {
   font-size: 18px;
-  background: #000;
+  background: #ff003b;
   color: #fff;
   border: none;
   padding: 12px;
@@ -127,7 +130,7 @@ body {
 }
 
 .chat-form button:hover {
-  background: #666666;
+  background: #cc0030;
 }
 
 .chat-form button:focus {
@@ -188,7 +191,9 @@ body {
   min-height: 160px;
   position: relative;
   cursor: pointer;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .product-card.selected {
@@ -267,7 +272,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid #e3a535;
   border-radius: 20px;
   padding: 6px 10px;
   font-size: 14px;
@@ -312,7 +317,7 @@ body {
   font-size: 18px;
   font-weight: 500;
   color: #fff;
-  background: #000;
+  background: #ff003b;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -320,7 +325,7 @@ body {
 }
 
 .generate-btn:hover {
-  background: #666;
+  background: #cc0030;
 }
 
 .generate-btn i {

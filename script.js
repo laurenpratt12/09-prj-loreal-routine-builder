@@ -12,7 +12,8 @@ const WORKER_URL = "https://loreal-chatbot.prattla5.workers.dev/";
 
 /* ---------- State ---------- */
 let allProducts = [];
-let selectedProducts = JSON.parse(localStorage.getItem("selectedProducts")) || [];
+let selectedProducts =
+  JSON.parse(localStorage.getItem("selectedProducts")) || [];
 let conversationHistory = [];
 
 /* ---------- Initial placeholder ---------- */
@@ -72,7 +73,7 @@ function displayProducts(products) {
         <p>${product.brand}</p>
       </div>
     </div>
-  `
+  `,
     )
     .join("");
 }
@@ -95,7 +96,7 @@ function renderSelectedProducts() {
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
-    `
+    `,
       )
       .join("")}
     <button id="clearAllBtn" class="clear-all-btn">Clear All</button>
@@ -158,7 +159,9 @@ selectedProductsList.addEventListener("click", (e) => {
     selectedProducts = selectedProducts.filter((p) => p.id !== id);
     saveSelectedProducts();
     renderSelectedProducts();
-    productsContainer.querySelector(`[data-id="${id}"]`)?.classList.remove("selected");
+    productsContainer
+      .querySelector(`[data-id="${id}"]`)
+      ?.classList.remove("selected");
   }
 
   if (clearBtn) {
@@ -189,7 +192,8 @@ async function callWorker(messages) {
   });
 
   const data = await response.json();
-  if (data.error) throw new Error(data.error.message || "Something went wrong.");
+  if (data.error)
+    throw new Error(data.error.message || "Something went wrong.");
   return data.choices[0].message.content;
 }
 
@@ -203,12 +207,14 @@ generateRoutineBtn.addEventListener("click", async () => {
   chatWindow.innerHTML = "";
   addChatMessage("assistant", "Building your personalized routine…");
 
-  const productData = selectedProducts.map(({ name, brand, category, description }) => ({
-    name,
-    brand,
-    category,
-    description,
-  }));
+  const productData = selectedProducts.map(
+    ({ name, brand, category, description }) => ({
+      name,
+      brand,
+      category,
+      description,
+    }),
+  );
 
   const userMessage = `Using ONLY these selected products, create a step-by-step personalized routine (morning and/or evening as relevant), explaining the order of use and why each product fits: ${JSON.stringify(productData)}`;
 
